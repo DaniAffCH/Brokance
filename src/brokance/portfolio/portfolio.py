@@ -1,5 +1,6 @@
 from datetime import datetime
 from typing import Literal, Dict
+from brokance.data_ingestion.base import BaseDataProvider
 from dataclasses import dataclass, asdict
 
 @dataclass
@@ -24,6 +25,13 @@ class Transaction:
             date=datetime.fromisoformat(d["date"]),
             type=d["type"]
         )
+        
+    @classmethod
+    def from_provider(cls, symbol: str, quantity: float, date: datetime, type: Literal["buy", "sell", "dividend"], provider: BaseDataProvider):
+        price = provider.latest_price(symbol, date)
+        return cls(symbol=symbol, quantity=quantity, price=price, date=date, type=type)
+    
+    
 
 class Position:
     
